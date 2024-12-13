@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: black;
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+.App{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 100px 16px;
+  min-height: 100vh;
+  height: 100%;
+  background-color: beige;
+}
+
+#canvas{
+  border: 1px solid red;
+  z-index: 2;
+}
+
+.lower-canvas{
+  position: initial !important;
+}
