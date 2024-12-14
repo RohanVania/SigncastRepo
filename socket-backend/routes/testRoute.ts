@@ -1,5 +1,5 @@
 import express from 'express';
-import { TestPrismaCreation, CreateFile, GetAllFiles } from "../controller/Test";
+import { TestPrismaCreation, CreateFile, GetAllFiles, FetchFileById } from "../controller/Test";
 
 const router = express.Router();
 
@@ -11,6 +11,9 @@ router.post("/file/create", CreateFile);
 
 // GET /api/files
 router.get('/files', GetAllFiles)
+
+// Fetch Particular File /api/file/id
+router.get('/file/:id',FetchFileById)
 
 
 export default router;

@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import prismaConnection from "../config/prismaConnectionObject";
+import { error } from "node:console";
 
 type ActionResult<T> = { status: "success", data?: T, message: string } | { status: "error", error: string } | { status: 'pending', data: string, message: string }
 
+//Dummy Route for Testing
 export async function TestPrismaCreation() {
     try {
         const res = await prismaConnection.user.create({
@@ -51,25 +53,51 @@ export async function TestPrismaCreation() {
  */
 export async function CreateFile(req: Request, resp: Response) {
     try {
-        const { name, data } = req.body;
+        const { data, FileId } = req.body
 
-        const res = await prismaConnection.file.create({
-            data: {
-                name: name,
-                data: data,
-            },
-        });
-
-        console.log(res);
-        resp.status(200).json({
-            status: "success",
-            message: "File Created successfully",
+        const fileAlreadyPresent = await prismaConnection.file.findUnique({
+            where: {
+                id: FileId
+            }
         })
+
+        //* If File Dont Exists Create one else update existing
+        if (!fileAlreadyPresent) {
+            const res = await prismaConnection.file.create({
+                data: {
+                    name: 'File-1 ',
+                    data: data,
+                },
+            });
+
+            resp.status(200).json({
+                status: "success",
+                message: "File Created successfully",
+            })
+        }
+
+        const fileUpdate = await prismaConnection.file.update({
+            where: {
+                id: FileId,
+            },
+            data: {
+                data: data
+            }
+        })
+
+        resp.status(200).json({
+            status: "updated",
+            message: "File Updated successfully",
+            data: fileUpdate
+        })
+
     } catch (err) {
         console.error(err);
-        resp.status(200).json({
+        resp.status(500).json({
             status: "error",
             error: "Something went wrong",
+            errMessage: err
+
         })
     }
 }
@@ -107,10 +135,36 @@ export async function GetAllFiles(req: Request, resp: Response) {
         })
     } catch (err) {
         console.log(err);
-        resp.status(400).json({
+        resp.status(500).json({
             status: 'error',
-            error: 'Something went wrong'
+            error: 'Something went wrong',
+            errMessage: err
         })
 
+    }
+}
+
+
+export async function FetchFileById(req: Request, resp: Response) {
+    try {
+        const { id: FileId } = req.params;
+
+        const result = await prismaConnection.file.findUnique({
+            where: {
+                id: FileId
+            }
+        })
+        resp.status(200).json({
+            status: 'success',
+            data: result
+        })
+    }
+    catch (err) {
+        console.log(err);
+        resp.status(500).json({
+            status: 'error',
+            error: 'Something went wrong',
+            errMessage: err
+        })
     }
 }
