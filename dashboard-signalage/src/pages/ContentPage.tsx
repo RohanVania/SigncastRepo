@@ -3,11 +3,12 @@ import { useRef, useEffect, useState, useContext } from 'react';
 import { Button } from "@nextui-org/button";
 import { SocketIoContext } from '../SocketContext';
 import { Socket } from 'socket.io-client';
+import { SaveCanvasFile } from '../operations/APIfunctions/FilesOperation';
 
 type Props = {
   FileId: string
 }
-
+// * Coment
 type CursorPosition = {
   x: number,
   y: number
@@ -133,11 +134,27 @@ function ContentPage({ FileId }: Props) {
     // }
   }
 
+  async function saveFile() {
+    try {
+
+      let serializedCanvas = fabricCanvasRef?.toJSON();
+      const jsonObjectCanvas = JSON.stringify(serializedCanvas);
+      console.log(jsonObjectCanvas);
+      const result = await SaveCanvasFile(jsonObjectCanvas, FileId)
+      console.log("Result =>", result);
+    } catch (err) {
+      console.log("Error", err);
+
+    }
+  }
+
   return (
     <div className="App">
       <div className='flex gap-6'>
         <Button color="primary" onPress={addRectangle} className='mb-2'>Add Rectangle</Button>
         <Button color="primary" onPress={addCircle} className='mb-2'>Add Circle</Button>
+        <Button color="secondary" onPress={saveFile} className='mb-2'>Save File</Button>
+
       </div>
       <canvas id="canvas" ref={canvasRef} />
     </div>
