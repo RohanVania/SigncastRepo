@@ -1,15 +1,27 @@
 import { Button } from '@nextui-org/react';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { SocketIoContext } from '../SocketContext';
 import ContentPage from './ContentPage';
+import { FetchParticularFileById } from '../operations/APIfunctions/FilesOperation';
 function FilePage() {
+    // * Comment
     const { id } = useParams();
     const socket = useContext(SocketIoContext)
+    const [fileData,setData]=useState(null);
 
     const handleJoinedListener = (data: any) => {
         console.log('Some Other User Joined', data)
     }
+
+    const fetchParticularFile = async (id: string) => {
+        const result = await FetchParticularFileById(id)
+        return result.data
+    }
+
+    useEffect(() => {
+        fetchParticularFile(id as string)
+    }, [])
 
     useEffect(() => {
         if (socket) {
